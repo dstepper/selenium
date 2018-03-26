@@ -160,10 +160,20 @@ public class JsonHttpCommandCodec extends AbstractHttpCommandCodec {
         }
         return ImmutableMap.of("type", type, "ms", entry.getValue());
 
-      case DriverCommand.SWITCH_TO_WINDOW:
-        return ImmutableMap.<String, Object>builder()
-          .put("name", parameters.get("handle"))
-          .build();
+       case DriverCommand.SWITCH_TO_WINDOW:
+        // you need to set a system property with the browsername
+        String browserVersion = System.getProperty("selenium.browser.browserstack.desktop.browser");
+
+        if ("Firefox".equalsIgnoreCase(browserVersion)) {
+          return ImmutableMap.<String, Object>builder()
+              .put("handle", parameters.get("handle"))
+              .build();
+        }
+        else {
+          return ImmutableMap.<String, Object>builder()
+              .put("name", parameters.get("handle"))
+              .build();
+        }
 
       default:
         return parameters;
